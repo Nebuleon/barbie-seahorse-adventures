@@ -28,6 +28,11 @@ DOWN_KEYS = (K_DOWN,)
 MENU_KEYS = (K_RETURN,)
 EXIT_KEYS = (K_ESCAPE,)
 
+YES_KEYS = (K_y,)
+NO_KEYS = (K_n,)
+YES_ACTIONS = ('jump',)
+NO_ACTIONS = ('bubble',)
+
 # Input for joystick/gamepad: (indexing start at zero)
 JUMP_BUTTONS = (0,)
 BUBBLE_BUTTONS = (1,)

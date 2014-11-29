@@ -303,7 +303,6 @@ def main():
             fname = v
             
     g = Game()
-    g.init()
     import menu
     l = l2 = menu.Menu(g)
     #l = menu.Intro(g,l2)

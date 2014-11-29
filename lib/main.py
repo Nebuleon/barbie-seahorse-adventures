@@ -67,7 +67,11 @@ class Game(engine.Game):
         if FULL: mode |= FULLSCREEN
         if '-full' in sys.argv:
             mode ^= FULLSCREEN
+        if mode & FULLSCREEN:
+            mode |= HWSURFACE | DOUBLEBUF
         self.screen = pygame.display.set_mode((sw,sh),mode)
+        if mode & FULLSCREEN:
+            pygame.mouse.set_visible(False)
         pygame.display.set_caption(TITLE)
         self.timer = timer.Timer(FPS)
         #self.timer = timer.Speedometer()

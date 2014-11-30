@@ -106,22 +106,17 @@ class Level:
         img = pygame.Surface((1, 1)).convert_alpha()
         img.fill((0, 0, 0, 0))
         self.images[None] = img
-        for n in xrange(0, len(self._tiles)):
-            self.images[n] = self._tiles[n]
 
         import tiles
-        self._images = []
+        self.tile_animation = []
         for m in xrange(0, IROTATE):
-            r = dict(self.images)
-            # for n,i,t in tiles.TANIMATE:
-                # n2 = n+(m/t)%i
-                # r[n] = self.images[n2]
+            r = list(self._tiles)
             for n, incs in tiles.TANIMATE:
                 n2 = n + incs[m % len(incs)]
-                r[n] = self.images[n2]
+                r[n] = self._tiles[n2]
             for n1, n2 in tiles.TREPLACE:
-                r[n1] = self.images[n2]
-            self._images.append(r)
+                r[n1] = self._tiles[n2]
+            self.tile_animation.append(r)
 
         self.size = len(self.data[0][0]), len(self.data[0])
 
@@ -260,24 +255,28 @@ class Level:
 
         bg = self.data[1]
 
-        images = self._images[self.frame % IROTATE]
+        tiles = self.tile_animation[self.frame % IROTATE]
         for y in xrange(v.top - v.top % TH, v.bottom, TH):
             for x in xrange(v.left - v.left % TW, v.right, TW):
                 n = bg[y / TH][x / TW]
                 if n:
-                    screen.blit(images[n], (x - v.left, y - v.top))
+                    screen.blit(tiles[n], (x - v.left, y - v.top))
                 s = self.layer[y / TH][x / TW]
                 if s is not None and s.image:
-                    screen.blit(images[s.image], (x - v.left, y - v.top))
+                    screen.blit(tiles[s.image], (x - v.left, y - v.top))
 
         for s in self.sprites:
+            try:
+                img = tiles[s.image]
+            except:
+                img = self.images[s.image]
             if s.exploded == 0:
-                screen.blit(images[s.image], (s.rect.x - s.shape.x - v.x, s.rect.y - s.shape.y - v.y))
+                screen.blit(img, (s.rect.x - s.shape.x - v.x, s.rect.y - s.shape.y - v.y))
             else:
-                w = images[s.image].get_width()
-                top = s.rect.y - s.shape.y - v.y - images[s.image].get_height() / 2 * s.exploded
-                for ty in xrange(0, images[s.image].get_height()):
-                    screen.blit(images[s.image], (s.rect.x - s.shape.x - v.x, top + ty * (1 + s.exploded)), (0, ty, w, 1))
+                w = img.get_width()
+                top = s.rect.y - s.shape.y - v.y - img.get_height() / 2 * s.exploded
+                for ty in xrange(0, img.get_height()):
+                    screen.blit(img, (s.rect.x - s.shape.x - v.x, top + ty * (1 + s.exploded)), (0, ty, w, 1))
 
         screen = _screen
         self.paint_text(screen)
@@ -445,7 +444,7 @@ class Level:
 
         # text = 'LIVES: %d'%self.game.lives
         for i in xrange(self.game.lives):
-            img = self.images[0x0C]  # the extra life tile
+            img = self._tiles[0x0C]  # the extra life tile
             x, y = SW - 1.05 * img.get_width() * i - img.get_width() - pad, pad
             blit(img, (x, y))
         # text = '%d . %02d'%(self.game.lives,self.game.coins)
@@ -469,7 +468,7 @@ class Level:
 
         textheight = img.get_height()
 
-        img = self.images[0x28]  # The coin
+        img = self._tiles[0x28]  # The coin
         x, y = x - img.get_width() - pad, y - img.get_height() / 2 + textheight / 2
         blit(img, (x, y))
 

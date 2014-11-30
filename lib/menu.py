@@ -19,7 +19,7 @@ class Menu(engine.State):
 
     def init(self):
         self.font = self.game.font
-        self.bkgr = pygame.image.load(data.filepath(os.path.join('bkgr', '2.png')))
+        self.bkgr = pygame.image.load(data.filepath(os.path.join('bkgr', '2.png'))).convert()
 
         self.cur = 0
         self.game.lcur = 0
@@ -36,7 +36,7 @@ class Menu(engine.State):
 
         self.frame = 0
 
-        self.logo = pygame.image.load(data.filepath(os.path.join('title.png')))
+        self.logo = pygame.image.load(data.filepath(os.path.join('title.png'))).convert_alpha()
 
     def debug_mode(self):
         self.levels = []

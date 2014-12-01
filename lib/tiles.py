@@ -202,6 +202,8 @@ TIMMUTABLE = {
     0x61: True,
     0x62: True,
 
+    0x46: True,  # jungle alternate leaf/earth texture
+
     # Volcano backdrop sides.
     0x90: True,
     0x93: True,

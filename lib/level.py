@@ -155,7 +155,10 @@ class Level:
                 if bg_tile != 0:
                     self.bg2.blit(self._tiles[bg_tile], (x * TW, y * TH))
                 if fg_tile != 0:
-                    tiles.t_put(self, (x, y), fg_tile)
+                    if fg_tile in tiles.TIMMUTABLE:
+                        self.bg2.blit(self._tiles[fg_tile], (x * TW, y * TH))
+                    else:
+                        tiles.t_put(self, (x, y), fg_tile)
                 if codes_tile != 0:
                     codes.c_init(self, (x, y), codes_tile)
 

@@ -176,9 +176,10 @@ class Level:
     def demote_fg(self):
         for y in xrange(0, self.size[1]):
             for x in xrange(0, self.size[0]):
-                if self.data[0][y][x] in tiles.TIMMUTABLE and self.data[1][y][x] == 0:
+                bg_tile, fg_tile = self.data[1][y][x], self.data[0][y][x]
+                if fg_tile in tiles.TIMMUTABLE and (bg_tile == 0 or bg_tile == fg_tile):
                     # Transfer the tile to the background
-                    self.data[1][y][x] = self.data[0][y][x]
+                    self.data[1][y][x] = fg_tile
                     # Erase the tile in the foreground
                     self.data[0][y][x] = 0
 

@@ -119,6 +119,7 @@ class Level:
             self.tile_animation.append(r)
 
         self.size = len(self.data[0][0]), len(self.data[0])
+        self.demote_fg()
 
         self._bkgr_fname = None
         self.set_bkgr('1.png')
@@ -135,14 +136,24 @@ class Level:
         # initialize all the tiles ...
         self.layer = [[None for x in xrange(0, self.size[0])] for y in xrange(0, self.size[1])]
 
+        # Create a surface containing solely the immutable background.
+        # Part of this surface is drawn onto the screen using one blit call,
+        # followed by the mutable tiles, drawn using one blit call per tile.
+        # See tiles.TIMMUTABLE for the full definition of 'immutable'.
+        self.bg2 = pygame.Surface((self.size[0] * TW, self.size[1] * TH)).convert_alpha()
+        self.bg2.fill((0, 0, 0, 0))
+        for y in xrange(0, self.size[1]):
+            l = self.data[1][y]
+            for x in xrange(0, self.size[0]):
+                n = l[x]
+                if not n:
+                    continue
+                self.bg2.blit(self._tiles[n], (x * TW, y * TH))
+
         for y in xrange(0, self.size[1]):
             l = self.data[0][y]
             for x in xrange(0, self.size[0]):
                 n = l[x]
-                # n1 = self.data[1][y][x]
-                # if n1:
-                    # print 'warning place background tiles in the foreground',x,y,n1
-                    # if n == 0: n = n1
                 if not n:
                     continue
                 tiles.t_put(self, (x, y), n)
@@ -161,6 +172,15 @@ class Level:
         self.status = '_first'
         self.player.image = None
         self.player.exploded = 30
+
+    def demote_fg(self):
+        for y in xrange(0, self.size[1]):
+            for x in xrange(0, self.size[0]):
+                if self.data[0][y][x] in tiles.TIMMUTABLE and self.data[1][y][x] == 0:
+                    # Transfer the tile to the background
+                    self.data[1][y][x] = self.data[0][y][x]
+                    # Erase the tile in the foreground
+                    self.data[0][y][x] = 0
 
     def set_bkgr(self, fname):
         if self._bkgr_fname == fname:
@@ -253,14 +273,11 @@ class Level:
 
         v = self.view
 
-        bg = self.data[1]
+        screen.blit(self.bg2, (0, 0), v)
 
         tiles = self.tile_animation[self.frame % IROTATE]
         for y in xrange(v.top - v.top % TH, v.bottom, TH):
             for x in xrange(v.left - v.left % TW, v.right, TW):
-                n = bg[y / TH][x / TW]
-                if n:
-                    screen.blit(tiles[n], (x - v.left, y - v.top))
                 s = self.layer[y / TH][x / TW]
                 if s is not None and s.image:
                     screen.blit(tiles[s.image], (x - v.left, y - v.top))

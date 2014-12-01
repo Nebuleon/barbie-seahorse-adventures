@@ -178,6 +178,37 @@ TREPLACE = [
     (0x20, 0x00),
 ]
 
+# Immutable tiles do not animate and cannot appear or disappear during a
+# level. This makes them perfect candidates for all sorts of optimisations,
+# including demoting them to the background if they are in the foreground
+# layer of the level file, and drawing them all to a secondary background
+# surface to be drawn all at once before the foreground, which saves blits.
+
+# Currently, an additional requirement for immutable tiles is that they
+# cannot take part into collision detection with any sprite.
+TIMMUTABLE = {
+    0x04: True,  # black background tile
+    0x05: True,  # exit sign
+
+    # Jungle backdrop.
+    0x51: True,
+    0x52: True,
+    0x61: True,
+    0x62: True,
+
+    # Volcano backdrop.
+    0x91: True,
+    0x92: True,
+    0xA1: True,
+    0xA2: True,
+
+    # Moon backdrop.
+    0xD1: True,
+    0xD2: True,
+    0xE1: True,
+    0xE2: True,
+}
+
 
 def t_put(g, pos, n):
     x, y = pos

@@ -256,8 +256,7 @@ class tdraw(gui.Widget):
         gui.Widget.__init__(self)
         self.rect.w = self.style.width = w
         self.rect.h = self.style.height = h
-        self.overlay = pygame.Surface((app.tile_w,app.tile_h)).convert_alpha()
-        self.overlay.fill((0,0,0,0))
+        self.overlay = pygame.Surface((app.tile_w,app.tile_h), pygame.SRCALPHA)
         s = pygame.Surface((self.rect.w,self.rect.h))
         clrs = [(148,148,148),(108,108,108)]
         for y in range(0,app.tile_h*2):
@@ -269,8 +268,7 @@ class tdraw(gui.Widget):
                     self.rect.h/(app.tile_h*2)+2))
         self.bg = s
 
-        s = pygame.Surface((self.rect.w,self.rect.h)).convert_alpha()
-        s.fill((0,0,0,0))
+        s = pygame.Surface((self.rect.w,self.rect.h), pygame.SRCALPHA)
         for x in range(0,app.tile_w):
             pygame.draw.line(s,(0,0,0),(self.rect.w*x/app.tile_w,0),(self.rect.w*x/app.tile_w,self.rect.h))
         for y in range(0,app.tile_h):

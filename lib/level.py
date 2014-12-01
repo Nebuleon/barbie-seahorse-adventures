@@ -103,9 +103,7 @@ class Level:
 
         # self.images = load_images(data.filepath('images'))
         self.images = Level._images
-        img = pygame.Surface((1, 1)).convert_alpha()
-        img.fill((0, 0, 0, 0))
-        self.images[None] = img
+        self.images[None] = pygame.Surface((1, 1), pygame.SRCALPHA)
 
         import tiles
         self.tile_animation = []
@@ -140,8 +138,7 @@ class Level:
         # Part of this surface is drawn onto the screen using one blit call,
         # followed by the mutable tiles, drawn using one blit call per tile.
         # See tiles.TIMMUTABLE for the full definition of 'immutable'.
-        self.bg2 = pygame.Surface((self.size[0] * TW, self.size[1] * TH)).convert_alpha()
-        self.bg2.fill((0, 0, 0, 0))
+        self.bg2 = pygame.Surface((self.size[0] * TW, self.size[1] * TH), pygame.SRCALPHA)
         for y in xrange(0, self.size[1]):
             l = self.data[1][y]
             for x in xrange(0, self.size[0]):

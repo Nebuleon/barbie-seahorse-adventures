@@ -316,8 +316,7 @@ class _app(gui.Container):
 def hex_image(self):
     if not hasattr(self,'tiles_w'): self.tiles_w = 256
     if not hasattr(self,'tiles_h'): self.tiles_h = 256
-    rimg = pygame.Surface((self.tiles_w,self.tiles_h)).convert_alpha()
-    rimg.fill((0,0,0,0))
+    rimg = pygame.Surface((self.tiles_w,self.tiles_h), pygame.SRCALPHA)
     w,h = self.tiles_w / self.tile_w, self.tiles_h / self.tile_h
     n = 0
     fnt = pygame.font.SysFont("helvetica",self.tile_h-1)
@@ -460,8 +459,7 @@ class vdraw(gui.Widget):
                 s.fill(clrs[(x+y)%2],(x*inc,y*inc,inc,inc))
         self.bg = s
 
-        s = pygame.Surface((self.rect.w,self.rect.h)).convert_alpha()
-        s.fill((0,0,0,0))
+        s = pygame.Surface((self.rect.w,self.rect.h), pygame.SRCALPHA)
         for x in range(0,app.view_w):
             pygame.draw.line(s,(0,0,0),(self.rect.w*x/app.view_w,0),(self.rect.w*x/app.view_w,self.rect.h))
         for y in range(0,app.view_h):

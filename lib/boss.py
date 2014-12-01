@@ -67,7 +67,7 @@ def loop(g, s):
         if s.dying == mid_frame:
             # explode
             g.game.sfx['pop'].play()
-            for n in xrange(0, 128):
+            for n in xrange(128):
                 r = pygame.Rect(random.randint(s.rect.left, s.rect.right), random.randint(s.rect.top, s.rect.bottom), 1, 1)
                 s2 = bub_init(g, r)
 

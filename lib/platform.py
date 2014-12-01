@@ -9,15 +9,15 @@ import sprite
 def init(g, r, n, vx, vy):
 
     x, y = r.centerx / TW, r.centery / TH
-    code = g.data[2][y][x]
+    code = g.codes_data[y][x]
     min_x = x
     max_x = x
     for dx in xrange(1, 4):
-        if g.data[2][y][x + dx] != code:
+        if g.codes_data[y][x + dx] != code:
             break
         max_x = x + dx
     for dx in xrange(-1, -4, -1):
-        if g.data[2][y][x + dx] != code:
+        if g.codes_data[y][x + dx] != code:
             break
         min_x = x + dx
 

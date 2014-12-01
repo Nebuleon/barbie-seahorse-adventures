@@ -80,7 +80,7 @@ class Menu(engine.State):
         y += 24
 
         x = 90
-        for n in xrange(0, len(self.items)):
+        for n in xrange(len(self.items)):
             text, value = self.items[n]
             text = text.replace('L', self.levels[self.game.lcur][1])
             c = (0x00, 0x00, 0x00)

@@ -83,13 +83,13 @@ def deinit(g, s):
 def init_bounds(g, s):
     x, y = s.rect.centerx / TW, s.rect.centery / TH
     min_x, min_y, max_x, max_y = x, y, x, y
-    while g.data[2][y][min_x] != CODE_BOUNDS:
+    while g.codes_data[y][min_x] != CODE_BOUNDS:
         min_x -= 1
-    while g.data[2][y][max_x] != CODE_BOUNDS:
+    while g.codes_data[y][max_x] != CODE_BOUNDS:
         max_x += 1
-    while g.data[2][min_y][x] != CODE_BOUNDS:
+    while g.codes_data[min_y][x] != CODE_BOUNDS:
         min_y -= 1
-    while g.data[2][max_y][x] != CODE_BOUNDS:
+    while g.codes_data[max_y][x] != CODE_BOUNDS:
         max_y += 1
     min_x += 1
     min_y += 1
@@ -134,7 +134,7 @@ def get_code(g, s, ix, iy):
     y = (y + dy) / TH + dy * max(0, abs(iy) - 1)
     if x < 0 or y < 0 or x >= g.size[0] or y >= g.size[1]:
         return 0
-    return g.data[2][y][x]
+    return g.codes_data[y][x]
 
 
 def myinc(f, i):

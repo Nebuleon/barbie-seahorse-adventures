@@ -17,22 +17,19 @@ import levels
 
 def load_level(fname):
     img = pygame.image.load(fname)
-    # return [[[img.get_at((x,y))[n] for x in xrange(0,img.get_width())] for y in xrange(0,img.get_height())] for n in xrange(0,4)]
     w, h = img.get_width(), img.get_height()
-    l = [[[0 for x in xrange(0, w)] for y in xrange(0, h)] for n in xrange(0, 3)]
-    for y in xrange(0, h):
-        for x in xrange(0, w):
-            r, g, b, a = img.get_at((x, y))
-            l[0][y][x] = r
-            l[1][y][x] = g
-            l[2][y][x] = b
-    return l
+    fg, bg, codes = [[[0] * w for y in xrange(h)] for _ in xrange(3)]
+    rw, rh = xrange(w), xrange(h)
+    for y in rh:
+        for x in rw:
+            fg[y][x], bg[y][x], codes[y][x], _ = img.get_at((x, y))
+    return fg, bg, codes
 
 
 def load_tiles(fname):
     img = pygame.image.load(fname).convert_alpha()
     w, h = img.get_width() / TW, img.get_height() / TH
-    return [img.subsurface((n % w) * TW, (n / w) * TH, TW, TH) for n in xrange(0, w * h)]
+    return [img.subsurface((n % w) * TW, (n / w) * TH, TW, TH) for n in xrange(w * h)]
 
 
 def load_images(dname):
@@ -71,6 +68,18 @@ def load_images(dname):
     return r
 
 
+def demote_fg(fg, bg):
+    w, h = len(bg[0]), len(bg)
+    rw, rh = xrange(w), xrange(h)
+    for y in rh:
+        fg_row, bg_row = fg[y], bg[y]
+        for x in rw:
+            fg_tile, bg_tile = fg_row[x], bg_row[x]
+            if fg_tile in tiles.TIMMUTABLE and (bg_tile == 0 or bg_tile == fg_tile):
+                # Transfer the tile to the background
+                bg_row[x], fg_row[x] = fg_tile, 0
+
+
 class Tile:
 
     def __init__(self, n, pos):
@@ -91,7 +100,6 @@ class Level:
         self.parent = parent
 
     def init(self):
-        # self._tiles = load_tiles(data.filepath('tiles.tga'))
         self._tiles = Level._tiles
         fname = self.fname
         if fname is None:
@@ -99,15 +107,15 @@ class Level:
             fname = data.filepath(os.path.join('levels', fname))
         else:
             self.title = os.path.basename(self.fname)
-        self.data = load_level(fname)
+        fg, bg, codes_data = load_level(fname)
+        demote_fg(fg, bg)
 
-        # self.images = load_images(data.filepath('images'))
         self.images = Level._images
         self.images[None] = pygame.Surface((1, 1), pygame.SRCALPHA)
 
         import tiles
         self.tile_animation = []
-        for m in xrange(0, IROTATE):
+        for m in xrange(IROTATE):
             r = list(self._tiles)
             for n, incs in tiles.TANIMATE:
                 n2 = n + incs[m % len(incs)]
@@ -116,8 +124,7 @@ class Level:
                 r[n1] = self._tiles[n2]
             self.tile_animation.append(r)
 
-        self.size = len(self.data[0][0]), len(self.data[0])
-        self.demote_fg()
+        self.size = len(bg[0]), len(bg)
 
         self._bkgr_fname = None
         self.set_bkgr('1.png')
@@ -130,38 +137,27 @@ class Level:
         self.player = None
         self.frame = 0
         self.codes = {}
+        self.codes_data = codes_data
 
         # initialize all the tiles ...
-        self.layer = [[None for x in xrange(0, self.size[0])] for y in xrange(0, self.size[1])]
+        self.layer = [[None] * self.size[0] for y in xrange(self.size[1])]
 
         # Create a surface containing solely the immutable background.
         # Part of this surface is drawn onto the screen using one blit call,
         # followed by the mutable tiles, drawn using one blit call per tile.
         # See tiles.TIMMUTABLE for the full definition of 'immutable'.
         self.bg2 = pygame.Surface((self.size[0] * TW, self.size[1] * TH), pygame.SRCALPHA)
-        for y in xrange(0, self.size[1]):
-            l = self.data[1][y]
-            for x in xrange(0, self.size[0]):
-                n = l[x]
-                if not n:
-                    continue
-                self.bg2.blit(self._tiles[n], (x * TW, y * TH))
-
-        for y in xrange(0, self.size[1]):
-            l = self.data[0][y]
-            for x in xrange(0, self.size[0]):
-                n = l[x]
-                if not n:
-                    continue
-                tiles.t_put(self, (x, y), n)
-
-        for y in xrange(0, self.size[1]):
-            l = self.data[2][y]
-            for x in xrange(0, self.size[0]):
-                n = l[x]
-                if not n:
-                    continue
-                codes.c_init(self, (x, y), n)
+        rw, rh = xrange(self.size[0]), xrange(self.size[1])
+        for y in rh:
+            fg_row, bg_row, codes_row = fg[y], bg[y], codes_data[y]
+            for x in rw:
+                fg_tile, bg_tile, codes_tile = fg_row[x], bg_row[x], codes_row[x]
+                if bg_tile != 0:
+                    self.bg2.blit(self._tiles[bg_tile], (x * TW, y * TH))
+                if fg_tile != 0:
+                    tiles.t_put(self, (x, y), fg_tile)
+                if codes_tile != 0:
+                    codes.c_init(self, (x, y), codes_tile)
 
         # just do a loop, just to get things all shined up ..
         self.status = None
@@ -170,16 +166,6 @@ class Level:
         self.player.image = None
         self.player.exploded = 30
 
-    def demote_fg(self):
-        for y in xrange(0, self.size[1]):
-            for x in xrange(0, self.size[0]):
-                bg_tile, fg_tile = self.data[1][y][x], self.data[0][y][x]
-                if fg_tile in tiles.TIMMUTABLE and (bg_tile == 0 or bg_tile == fg_tile):
-                    # Transfer the tile to the background
-                    self.data[1][y][x] = fg_tile
-                    # Erase the tile in the foreground
-                    self.data[0][y][x] = 0
-
     def set_bkgr(self, fname):
         if self._bkgr_fname == fname:
             return
@@ -187,22 +173,19 @@ class Level:
         self.bkgr = pygame.image.load(data.filepath(os.path.join('bkgr', fname))).convert()
 
     def run_codes(self, r):
-        # r.clamp_ip(self.bounds)
-        for y in xrange(r.top / TH, r.bottom / TH):
-            if y < 0 or y >= self.size[1]:
-                continue
-            for x in xrange(r.left / TW, r.right / TW):
-                if x < 0 or x >= self.size[0]:
-                    continue
-                if (x, y) not in self.codes:
-                    n = self.data[2][y][x]
-                    if n == 0:
-                        continue
-                    s = codes.c_run(self, (x, y), n)
-                    if s is None:
-                        continue
-                    s._code = (x, y)
-                    self.codes[(x, y)] = s
+        rw = xrange(max(r.left / TW, 0), min(r.right / TW, self.size[0]))
+        rh = xrange(max(r.top / TH, 0), min(r.bottom / TH, self.size[1]))
+        for y in rh:
+            row = self.codes_data[y]
+            for x in rw:
+                coords = (x, y)
+                if coords not in self.codes:
+                    n = row[x]
+                    if n != 0:
+                        s = codes.c_run(self, coords, n)
+                        if s is not None:
+                            s._code = coords
+                            self.codes[coords] = s
 
     def get_border(self, dist):
         r = pygame.Rect(self.view)
@@ -274,9 +257,12 @@ class Level:
         screen.blit(self.bg2, (0, 0), v)
 
         tiles = self.tile_animation[self.frame % IROTATE]
-        for y in xrange(v.top - v.top % TH, v.bottom, TH):
-            for x in xrange(v.left - v.left % TW, v.right, TW):
-                s = self.layer[y / TH][x / TW]
+        rw = xrange(v.left - v.left % TW, v.right, TW)
+        rh = xrange(v.top - v.top % TH, v.bottom, TH)
+        for y in rh:
+            row = self.layer[y / TH]
+            for x in rw:
+                s = row[x / TW]
                 if s is not None and s.image:
                     screen.blit(tiles[s.image], (x - v.left, y - v.top))
 
@@ -290,7 +276,7 @@ class Level:
             else:
                 w = img.get_width()
                 top = s.rect.y - s.shape.y - v.y - img.get_height() / 2 * s.exploded
-                for ty in xrange(0, img.get_height()):
+                for ty in xrange(img.get_height()):
                     screen.blit(img, (s.rect.x - s.shape.x - v.x, top + ty * (1 + s.exploded)), (0, ty, w, 1))
 
         screen = _screen
@@ -323,9 +309,8 @@ class Level:
 
             # let the sprites do their thing
             for s in sprites:
-                if s.loop is None:
-                    continue
-                s.loop(self, s)
+                if s.loop is not None:
+                    s.loop(self, s)
 
             # re-calculate the groupings
             groups = {}
@@ -338,34 +323,30 @@ class Level:
             # hit them sprites! w-tsh!
             for s1 in sprites:
                 for g in s1.hit_groups:
-                    if g not in groups:
-                        continue
-                    for s2 in groups[g]:
-                        if not s1.rect.colliderect(s2.rect):
-                            continue
-                        s1.hit(self, s1, s2)
+                    if g in groups:
+                        for s2 in groups[g]:
+                            if s1.rect.colliderect(s2.rect):
+                                s1.hit(self, s1, s2)
 
             # hit walls and junk like that
             for s in sprites:
-                if not len(s.groups):
-                    continue
-                r = s.rect
-                hits = []
-                for y in xrange(r.top - r.top % TH, r.bottom, TH):
-                    for x in xrange(r.left - r.left % TW, r.right, TW):
-                        t = self.layer[y / TH][x / TW]
-                        if t is None:
-                            continue
-                        if not t.hit_groups.intersection(s.groups):
-                            continue
-                        dist = abs(t.rect.centerx - s.rect.centerx) + abs(t.rect.centery - s.rect.centery)
-                        hits.append([dist, t])
+                if len(s.groups):
+                    r = s.rect
+                    hits = []
+                    rw = xrange(r.left - r.left % TW, r.right, TW)
+                    rh = xrange(r.top - r.top % TH, r.bottom, TH)
+                    for y in rh:
+                        row = self.layer[y / TH]
+                        for x in rw:
+                            t = row[x / TW]
+                            if t is not None and t.hit_groups.intersection(s.groups):
+                                dist = abs(t.rect.centerx - s.rect.centerx) + abs(t.rect.centery - s.rect.centery)
+                                hits.append([dist, t])
 
-                hits.sort()
-                for dist, t in hits:
-                    if not t.rect.colliderect(s.rect):
-                        continue
-                    t.hit(self, t, s)
+                    hits.sort()
+                    for dist, t in hits:
+                        if t.rect.colliderect(s.rect):
+                            t.hit(self, t, s)
 
             # remove inactive sprites
             border = self.get_border(DEINIT_BORDER)

@@ -230,9 +230,9 @@ TIMMUTABLE = {
 
 def t_put(g, pos, n):
     x, y = pos
-    if n not in TILES:
+    try:
+        v = TILES[n]
+        return v[0](g, pygame.Rect(x * TW, y * TH, TW, TH), n, *v[1:])
+    except KeyError:
         # print 'undefined tile:',x,y,'0x%02x'%n
-        t_init(g, pygame.Rect(x * TW, y * TH, TW, TH), n, [], None)
-        return
-    v = TILES[n]
-    v[0](g, pygame.Rect(x * TW, y * TH, TW, TH), n, *v[1:])
+        return t_init(g, pygame.Rect(x * TW, y * TH, TW, TH), n, [], None)

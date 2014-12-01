@@ -190,17 +190,35 @@ TIMMUTABLE = {
     0x04: True,  # black background tile
     0x05: True,  # exit sign
 
+    # Jungle backdrop sides.
+    0x50: True,
+    0x53: True,
+    0x60: True,
+    0x63: True,
+
     # Jungle backdrop.
     0x51: True,
     0x52: True,
     0x61: True,
     0x62: True,
 
+    # Volcano backdrop sides.
+    0x90: True,
+    0x93: True,
+    0xA0: True,
+    0xA3: True,
+
     # Volcano backdrop.
     0x91: True,
     0x92: True,
     0xA1: True,
     0xA2: True,
+
+    # Moon backdrop sides.
+    0xD0: True,
+    0xD3: True,
+    0xE0: True,
+    0xE3: True,
 
     # Moon backdrop.
     0xD1: True,

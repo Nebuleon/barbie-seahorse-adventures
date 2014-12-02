@@ -8,6 +8,7 @@ from pgu import engine
 import data
 
 from cnst import *
+from rendercache import RenderCache
 
 import levels
 
@@ -18,7 +19,7 @@ class Menu(engine.State):
         self.game = game
 
     def init(self):
-        self.font = self.game.font
+        self.font = RenderCache(self.game.font)
         self.bkgr = pygame.image.load(data.filepath(os.path.join('bkgr', '2.png'))).convert()
 
         self.cur = 0
@@ -105,6 +106,7 @@ class Menu(engine.State):
         img = fnt.render(text, 1, c)
         screen.blit(img, (x, y))
 
+        self.font.end_frame()
         self.game.flip()
 
     def update(self, screen):
@@ -219,6 +221,7 @@ class Intro(engine.State):
         self.moon = pygame.image.load(data.filepath(os.path.join('intro', 'moon2.png'))).convert()
         self.black = self.moon.convert()
         self.black.fill((0, 0, 0))
+        self.font = RenderCache(self.game.fonts['intro'])
 
     def update(self, screen):
         return self.paint(screen)
@@ -251,7 +254,7 @@ class Intro(engine.State):
                 self.black.set_alpha(a)
                 screen.blit(self.black, (0, 0))
 
-            fnt = self.game.fonts['intro']
+            fnt = self.font
             x, y = 8, 0
             for text in ['... July 20, 1969', 'man first', 'walked on', 'the moon.']:
                 c = (255, 255, 255)
@@ -265,6 +268,7 @@ class Intro(engine.State):
                 self.black.set_alpha(a)
                 screen.blit(self.black, (0, 0))
 
+        fnt.end_frame()
         self.game.flip()
 
 
@@ -283,6 +287,7 @@ class Intro2(engine.State):
         self.bkgr = pygame.image.load(data.filepath(os.path.join('bkgr', '2.png')))
 
         self.frame = 0
+        self.font = RenderCache(self.game.fonts['intro'])
 
     def loop(self):
         self.frame += 1
@@ -296,7 +301,7 @@ class Intro2(engine.State):
     def paint(self, screen):
         # screen.fill((0,0,0))
         screen.blit(self.bkgr, (0, 0))
-        fnt = self.game.fonts['intro']
+        fnt = self.font
         x, y = 8, 0
         for text in ['This is', 'the year', 'of the', 'seahorse!']:
             c = (255, 255, 255)
@@ -307,6 +312,7 @@ class Intro2(engine.State):
             y += 36
         screen.blit(self.player, (130, 0))
 
+        fnt.end_frame()
         self.game.flip()
 
 
@@ -319,7 +325,7 @@ class Prompt(engine.State):
         self.no = no
 
     def init(self):
-        self.font = self.game.fonts['pause']
+        self.font = RenderCache(self.game.fonts['pause'])
         self.bkgr = self.game.screen.convert()
 
     def event(self, e):
@@ -338,6 +344,7 @@ class Prompt(engine.State):
         screen.blit(img, (x + 2, y + 2))
         img = fnt.render(text, 1, c)
         screen.blit(img, (x, y))
+        fnt.end_frame()
         self.game.flip()
 
 
@@ -349,7 +356,7 @@ class Pause(engine.State):
         self.next = next
 
     def init(self):
-        self.font = self.game.fonts['pause']
+        self.font = RenderCache(self.game.fonts['pause'])
         self.bkgr = self.game.screen.convert()
 
     def event(self, e):
@@ -366,6 +373,7 @@ class Pause(engine.State):
         screen.blit(img, (x + 2, y + 2))
         img = fnt.render(text, 1, c)
         screen.blit(img, (x, y))
+        fnt.end_frame()
         self.game.flip()
 
 
@@ -379,6 +387,7 @@ class Credits(engine.State):
         self.frame = 0
 
         self.bkgr = pygame.image.load(data.filepath(os.path.join('bkgr', "5.png"))).convert()
+        self.font = RenderCache(self.game.fonts['help'])
 
     def update(self, screen):
         return self.paint(screen)
@@ -398,7 +407,7 @@ class Credits(engine.State):
         screen.blit(self.bkgr, (-x, 0))
         screen.blit(self.bkgr, (-x + self.bkgr.get_width(), 0))
 
-        fnt = self.game.fonts['help']
+        fnt = self.font
         x, y = 8, 10
         for text in [
             'Core Team',
@@ -419,6 +428,7 @@ class Credits(engine.State):
             img = fnt.render(text, 1, c)
             screen.blit(img, (x, y))
             y += 20
+        fnt.end_frame()
         self.game.flip()
 
 
@@ -432,6 +442,7 @@ class Help(engine.State):
         self.frame = 0
 
         self.bkgr = pygame.image.load(data.filepath(os.path.join('bkgr', "5.png"))).convert()
+        self.font = RenderCache(self.game.fonts['help'])
 
     def update(self, screen):
         return self.paint(screen)
@@ -451,7 +462,7 @@ class Help(engine.State):
         screen.blit(self.bkgr, (-x, 0))
         screen.blit(self.bkgr, (-x + self.bkgr.get_width(), 0))
 
-        fnt = self.game.fonts['help']
+        fnt = self.font
         x, y = 8, 10
         for text in [
             'Help',
@@ -472,4 +483,5 @@ class Help(engine.State):
             img = fnt.render(text, 1, c)
             screen.blit(img, (x, y))
             y += 20
+        fnt.end_frame()
         self.game.flip()

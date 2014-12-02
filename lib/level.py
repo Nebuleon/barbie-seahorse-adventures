@@ -6,6 +6,7 @@ import pygame
 from pygame.locals import *
 
 from cnst import *
+from rendercache import RenderCache
 
 import data
 
@@ -98,6 +99,7 @@ class Level:
         self.game = game
         self.fname = fname
         self.parent = parent
+        self.font = RenderCache(self.game.fonts['level'])
 
     def init(self):
         self._tiles = Level._tiles
@@ -285,6 +287,7 @@ class Level:
         screen = _screen
         self.paint_text(screen)
 
+        self.font.end_frame()
         self.game.flip()
 
     def update(self, screen):
@@ -424,7 +427,7 @@ class Level:
             self.player.event(self, self.player, e)
 
     def paint_text(self, screen):
-        fnt = self.game.fonts['level']
+        fnt = self.font
         pad = 4
 
         top_y = pad
@@ -438,7 +441,6 @@ class Level:
         blit(img, (x + 1, y + 1))
         c = (255, 255, 255)
         img = fnt.render(text, 1, c)
-        blit(img, (x, y))
         blit(img, (x, y))
 
         # text = 'LIVES: %d'%self.game.lives
@@ -479,5 +481,4 @@ class Level:
         blit(img, (x + 1, y + 1))
         c = (255, 255, 255)
         img = fnt.render(text, 1, c)
-        blit(img, (x, y))
         blit(img, (x, y))

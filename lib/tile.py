@@ -4,6 +4,7 @@ from pygame.locals import *
 from cnst import *
 
 import sprite
+import tiles
 
 
 def t_init(g, r, n, hit_groups, hit, *params):
@@ -17,7 +18,13 @@ def t_init(g, r, n, hit_groups, hit, *params):
     t.standable = 0
     if len(params) > 0:
         t.standable = params[0]
-    g.layer[r.centery / TH][r.centerx / TW] = t
+    if n not in tiles.TDECORATION:
+        g.layer[r.centery / TH][r.centerx / TW] = t
+
+    if n in tiles.TIMMUTABLE:
+        g.drawfg[r.centery / TH][r.centerx / TW] = 0
+    else:
+        g.drawfg[r.centery / TH][r.centerx / TW] = n
     return t
 
 # tile that takes up half the space it normally would, and is on the left side

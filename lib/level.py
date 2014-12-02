@@ -69,18 +69,6 @@ def load_images(dname):
     return r
 
 
-def demote_fg(fg, bg):
-    w, h = len(bg[0]), len(bg)
-    rw, rh = xrange(w), xrange(h)
-    for y in rh:
-        fg_row, bg_row = fg[y], bg[y]
-        for x in rw:
-            fg_tile, bg_tile = fg_row[x], bg_row[x]
-            if fg_tile in tiles.TIMMUTABLE and (bg_tile == 0 or bg_tile == fg_tile):
-                # Transfer the tile to the background
-                bg_row[x], fg_row[x] = fg_tile, 0
-
-
 class Tile:
 
     def __init__(self, n, pos):
@@ -110,7 +98,6 @@ class Level:
         else:
             self.title = os.path.basename(self.fname)
         fg, bg, codes_data = load_level(fname)
-        demote_fg(fg, bg)
 
         self.images = Level._images
         self.images[None] = pygame.Surface((1, 1), pygame.SRCALPHA)
@@ -143,6 +130,7 @@ class Level:
 
         # initialize all the tiles ...
         self.layer = [[None] * self.size[0] for y in xrange(self.size[1])]
+        self.drawfg = [[0] * self.size[0] for y in xrange(self.size[1])]
 
         # Create a surface containing solely the immutable background.
         # Part of this surface is drawn onto the screen using one blit call,
@@ -159,8 +147,7 @@ class Level:
                 if fg_tile != 0:
                     if fg_tile in tiles.TIMMUTABLE:
                         self.bg2.blit(self._tiles[fg_tile], (x * TW, y * TH))
-                    else:
-                        tiles.t_put(self, (x, y), fg_tile)
+                    tiles.t_put(self, (x, y), fg_tile)
                 if codes_tile != 0:
                     codes.c_init(self, (x, y), codes_tile)
 
@@ -265,11 +252,11 @@ class Level:
         rw = xrange(v.left - v.left % TW, v.right, TW)
         rh = xrange(v.top - v.top % TH, v.bottom, TH)
         for y in rh:
-            row = self.layer[y / TH]
+            row = self.drawfg[y / TH]
             for x in rw:
                 s = row[x / TW]
-                if s is not None and s.image:
-                    screen.blit(tiles[s.image], (x - v.left, y - v.top))
+                if s != 0:
+                    screen.blit(tiles[s], (x - v.left, y - v.top))
 
         for s in self.sprites:
             try:

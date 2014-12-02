@@ -65,6 +65,9 @@ class Game(engine.Game):
         self.lowres = LOWRES
         if '-lowres' in sys.argv:
             self.lowres = not self.lowres
+        self.vsync = VSYNC
+        if '-vsync' in sys.argv:
+            self.vsync = not self.vsync
 
         sw, sh = SW, SH
         if not self.lowres:
@@ -146,9 +149,10 @@ class Game(engine.Game):
             self.sfx[name] = Sound(data.filepath(os.path.join('sfx', '%s.wav' % name)))
 
     def tick(self):
-        r = self.timer.tick()
-        if r is not None:
-            print r
+        if not self.vsync:
+            r = self.timer.tick()
+            if r is not None:
+                print r
 
     def flip(self):
         if not self.lowres:

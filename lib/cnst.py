@@ -11,6 +11,7 @@ TITLE = "Barbie Seahorse Adventures"  # "Barbie Seahorse Adventures" #"Bubble Ko
 SCALE2X = False  # use the scale2x scaler to make things look hi-res
 LOWRES = False  # keep it in 320x240 mode
 FULL = True
+VSYNC = False  # True if the system supports waiting for vertical sync
 
 # INIT_BORDER = 100
 # DEINIT_BORDER = 200

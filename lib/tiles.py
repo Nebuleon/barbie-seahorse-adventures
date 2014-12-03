@@ -187,7 +187,6 @@ TREPLACE = [
 # Decoration tiles are immutable, and so are platforms and anything that can
 # participate in collision detection, as long as they don't ever change.
 TIMMUTABLE = {
-    0x01: True,  # yellow smiling tile (but only in the FG or BG)
     0x04: True,  # black background tile
     0x05: True,  # exit sign
 

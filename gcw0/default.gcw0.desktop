@@ -1,0 +1,10 @@
+[Desktop Entry]
+
+Name=BarbieSA
+Comment=Barbie Seahorse Adventures by The Olde Battleaxe
+Icon=barbie-seahorse-adventures
+Exec=run_game.py -lowres -vsync
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=games;

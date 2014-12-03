@@ -29,10 +29,10 @@ DOWN_KEYS = (K_DOWN,)
 MENU_KEYS = (K_RETURN,)
 EXIT_KEYS = (K_ESCAPE,)
 
-KEY_HELP = ['Use the arrow keys to',
+KEY_HELP = ['Use the d-pad to',
             'move the seahorse.',
-            'Ctrl - Jump',
-            'Alt - Shoot']
+            'A - Jump',
+            'B - Shoot']
 
 YES_KEYS = (K_y,)
 NO_KEYS = (K_n,)

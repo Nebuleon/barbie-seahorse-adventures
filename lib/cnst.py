@@ -20,24 +20,26 @@ DEINIT_BORDER = TW * 8
 
 
 # Input for keyboard:
-JUMP_KEYS = (K_SPACE, K_LCTRL, K_RCTRL, K_z)
-BUBBLE_KEYS = (K_LALT, K_RALT, K_x)
+JUMP_KEYS = (K_LCTRL,)  # A
+BUBBLE_KEYS = (K_LALT,)  # B
 LEFT_KEYS = (K_LEFT,)
 RIGHT_KEYS = (K_RIGHT,)
 UP_KEYS = (K_UP,)
 DOWN_KEYS = (K_DOWN,)
-MENU_KEYS = (K_RETURN,)
-EXIT_KEYS = (K_ESCAPE,)
+MENU_KEYS = ()
+EXIT_KEYS = (K_RETURN,)
 
 KEY_HELP = ['Use the d-pad to',
             'move the seahorse.',
             'A - Jump',
             'B - Shoot']
 
-YES_KEYS = (K_y,)
-NO_KEYS = (K_n,)
-YES_ACTIONS = ('jump',)
-NO_ACTIONS = ('bubble',)
+EXIT_HELP = 'Select to quit'
+
+YES_KEYS = (K_ESCAPE,)
+NO_KEYS = ()
+YES_ACTIONS = ()
+NO_ACTIONS = ('exit',)  # K_RETURN is turned into an 'exit' USEREVENT
 
 # Input for joystick/gamepad: (indexing start at zero)
 JUMP_BUTTONS = (0,)

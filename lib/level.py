@@ -326,8 +326,8 @@ class Level:
                 if len(s.groups):
                     r = s.rect
                     hits = []
-                    rw = xrange(r.left - r.left % TW, r.right, TW)
-                    rh = xrange(r.top - r.top % TH, r.bottom, TH)
+                    rw = xrange(max(r.left - r.left % TW, 0), min(r.right, self.size[0] * TW), TW)
+                    rh = xrange(max(r.top - r.top % TH, 0), min(r.bottom, self.size[1] * TH), TH)
                     for y in rh:
                         row = self.layer[y / TH]
                         for x in rw:

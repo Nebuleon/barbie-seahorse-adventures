@@ -444,6 +444,14 @@ class Help(engine.State):
         self.bkgr = pygame.image.load(data.filepath(os.path.join('bkgr', "5.png"))).convert()
         self.font = RenderCache(self.game.fonts['help'])
 
+        self.text = ['Help',
+                     '']
+        self.text.extend(KEY_HELP)
+        self.text.extend(['',
+                          'Enemies take 3 shots unless',
+                          'you are powered up!  You can',
+                          'ride enemy bubbles.'])
+
     def update(self, screen):
         return self.paint(screen)
         pass
@@ -464,23 +472,12 @@ class Help(engine.State):
 
         fnt = self.font
         x, y = 8, 10
-        for text in [
-            'Help',
-            '',
-            'Use your arrow keys to',
-            'move the seahorse.',
-            'Button 1 - Jump',
-            'Button 2 - Shoot',
-            '',
-            'Enemies take 3 shots unless',
-            'you are powered up!  You can',
-            'ride enemy bubbles.',
-        ]:
+        for line in self.text:
             c = (255, 255, 255)
-            img = fnt.render(text, 1, (0, 0, 0))
+            img = fnt.render(line, 1, (0, 0, 0))
             x = (SW - img.get_width()) / 2
             screen.blit(img, (x + 2, y + 2))
-            img = fnt.render(text, 1, c)
+            img = fnt.render(line, 1, c)
             screen.blit(img, (x, y))
             y += 20
         fnt.end_frame()

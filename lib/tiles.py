@@ -178,15 +178,20 @@ TREPLACE = [
     (0x20, 0x00),
 ]
 
-# Immutable tiles do not animate and cannot appear or disappear during a
-# level. If found in the background or the foreground, they can be drawn to a
-# secondary background surface, drawn after the level's primary background,
-# part of which is drawn to the screen with one blit call. This saves on blit
-# calls versus having to draw tiles with one blit call each.
+# Immutable tiles do not animate and cannot disappear during a level. If found
+# in the background or the foreground, they can be drawn to a secondary
+# background surface, drawn after the level's primary background, part of
+# which is drawn to the screen with one blit call. This saves on blit calls
+# versus having to draw tiles with one blit call each.
+
+# Tiles that appear in the middle of a level (for example, the steps that
+# appear after the first phase of the boss is destroyed) can simply be left in
+# the list of foreground tiles to draw.
 
 # Decoration tiles are immutable, and so are platforms and anything that can
-# participate in collision detection, as long as they don't ever change.
+# participate in collision detection, as long as they don't ever disappear.
 TIMMUTABLE = {
+    0x01: True,  # yellow smiling tile (but only in the FG or BG)
     0x04: True,  # black background tile
     0x05: True,  # exit sign
 

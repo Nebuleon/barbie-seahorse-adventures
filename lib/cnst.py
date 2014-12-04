@@ -20,8 +20,8 @@ DEINIT_BORDER = TW * 8
 
 
 # Input for keyboard:
-JUMP_KEYS = (K_LCTRL,)  # A
-BUBBLE_KEYS = (K_LALT,)  # B
+JUMP_KEYS = (K_LCTRL, K_SPACE)  # A, Y
+BUBBLE_KEYS = (K_LALT, K_LSHIFT)  # B, X
 LEFT_KEYS = (K_LEFT,)
 RIGHT_KEYS = (K_RIGHT,)
 UP_KEYS = (K_UP,)
@@ -31,8 +31,8 @@ EXIT_KEYS = (K_RETURN,)
 
 KEY_HELP = ['Use the d-pad to',
             'move the seahorse.',
-            'A - Jump',
-            'B - Shoot']
+            'A, Y - Jump',
+            'B, X - Shoot']
 
 EXIT_HELP = 'Select to quit'
 

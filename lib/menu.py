@@ -426,6 +426,8 @@ class Credits(engine.State):
             'tim - music, levels',
             'DrPetter - backgrounds, sfx',
             '',
+            'Nebuleon - GCW Zero port, fixes',
+            '',
             'Also thanks to:',
             'fydo (level), Lerc (gfx), Tee (level)',
         ]:
@@ -435,7 +437,7 @@ class Credits(engine.State):
             screen.blit(img, (x + 2, y + 2))
             img = fnt.render(text, 1, c)
             screen.blit(img, (x, y))
-            y += 20
+            y += 16
         fnt.end_frame()
         self.game.flip()
 

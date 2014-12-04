@@ -339,11 +339,19 @@ class Prompt(engine.State):
         text = self.text
         fnt = self.font
         c = (255, 255, 255)
-        img = fnt.render(text, 1, (0, 0, 0))
-        x, y = (SW - img.get_width()) / 2, (SH - img.get_height()) / 2
-        screen.blit(img, (x + 2, y + 2))
-        img = fnt.render(text, 1, c)
-        screen.blit(img, (x, y))
+        line_height = 24
+        top = (SH - line_height * len(text)) / 2
+
+        for line_number in xrange(len(text)):
+            c = (0, 0, 0)
+            line = text[line_number]
+            img = fnt.render(line, 1, c)
+            x, y = (SW - img.get_width()) / 2, top + line_number * line_height
+            screen.blit(img, (x + 1, y + 1))
+            c = (255, 255, 255)
+            img = fnt.render(line, 1, c)
+            screen.blit(img, (x, y))
+
         fnt.end_frame()
         self.game.flip()
 

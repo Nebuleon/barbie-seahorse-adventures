@@ -409,7 +409,7 @@ class Level:
         # if e.type is KEYDOWN and e.key in (K_ESCAPE,):
         if e.type is USEREVENT and e.action == 'exit':
             next = menu.Transition(self.game, self.parent)
-            return menu.Prompt(self.game, 'paused (' + EXIT_HELP + ')', next, self)
+            return menu.Prompt(self.game, ['paused', '(' + EXIT_HELP + ')'], next, self)
         elif self.player is not None:
             self.player.event(self, self.player, e)
 

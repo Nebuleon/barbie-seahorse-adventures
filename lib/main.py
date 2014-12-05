@@ -48,7 +48,6 @@ class Game(engine.Game):
 
     def init_play(self):
         self.score = 0
-        self.high = 0
         self.lives = 2
         self.coins = 0
         self.powerup = False

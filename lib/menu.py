@@ -65,20 +65,9 @@ class Menu(engine.State):
 
         screen.blit(self.logo, ((SW - self.logo.get_width()) / 2, y))
         # y += 48
-        y = 132
+        y = 144
 
         fnt = self.font
-
-        text = 'high: %05d' % self.game.high
-        c = (0x00, 0x00, 0x00)
-        img = fnt.render(text, 1, c)
-        x = (SW - img.get_width()) / 2
-        screen.blit(img, (x + 1, y + 1))
-        c = (0xff, 0xff, 0xff)
-        img = fnt.render(text, 1, c)
-        screen.blit(img, (x, y))
-        # y += 36
-        y += 24
 
         x = 90
         for n in xrange(len(self.items)):

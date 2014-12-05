@@ -282,9 +282,6 @@ class Level:
         return self.paint(screen)
 
     def loop(self):
-        # record the high scores
-        self.game.high = max(self.game.high, self.game.score)
-
         if self.status != '_first':
             # start up some new sprites ...
             r = self.get_border(INIT_BORDER)
